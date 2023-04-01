@@ -1,0 +1,34 @@
+on:
+  pull_request:
+    types:
+      - closed
+
+name: clean-up
+env:
+  PROJECT_ID: ${{ vars.GCP_PROJECT }}
+  SERVICE: ${{ github.head_ref }}
+  REGION: us-central1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Delete Google Cloud Run service
+      run: |-
+        gcloud run service delete ${{ env.SERVICE }} \
+          --region ${{ env.REGION }} \
+          --platform "managed" \
+          --quiet
+
+    - name: Delete pushed GCR image
+      run: |-
+        gcloud container images delete gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }} \
+          --force-delete-tags \
+          --project=${{ env.PROJECT_ID }} \
+          --quiet
