@@ -21,7 +21,7 @@ jobs:
     steps:
     - name: Delete Google Cloud Run service
       run: |-
-        gcloud run service delete ${{ env.SERVICE }} \
+        gcloud run services delete ${{ env.SERVICE }} \
           --region ${{ env.REGION }} \
           --platform "managed" \
           --quiet
