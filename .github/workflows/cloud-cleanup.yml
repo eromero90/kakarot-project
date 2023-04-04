@@ -19,6 +19,9 @@ jobs:
       id-token: 'write'
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:
@@ -34,7 +37,7 @@ jobs:
 
     - name: Delete pushed GCR image
       run: |-
-        gcloud container images delete gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{  github.sha }} \
+        gcloud container images delete gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }} \
           --force-delete-tags \
           --project=${{ env.PROJECT_ID }} \
           --quiet
